@@ -15,6 +15,21 @@ function Header() {
   const handleToggleSidebar = () => {
     setShowMenu(!showMenu);
   };
+  const [role, setRole] = useState(null); // Initialize role state
+
+  useEffect(() => {
+    const userString = localStorage.getItem('user');
+    if (userString) {
+      try {
+        const user = JSON.parse(userString);
+        setRole(user.role); // Set role state based on user object
+      } catch (error) {
+        console.error('Error parsing user object:', error);
+      }
+    } else {
+      console.error('User object not found in local storage');
+    }
+  }, []);
 
 
   const [user, setUser] = useState(null);
@@ -167,13 +182,96 @@ function Header() {
           </Offcanvas.Title>
         </Offcanvas.Header>
         <Offcanvas.Body>
-          <ul style={{ marginBottom: '1cm', listStyle: 'none', textAlign: 'center', fontFamily: 'sans-serif', fontSize: '0.5cm', marginBottom: '1cm' }}>
-            <li><a className="active" href="/customer">Home</a></li>
-            <li><a href="/claim">Claim</a></li>
-            <li><a href="/myclaim">My Claims</a></li>
-            <li><a href="/settings">Settings</a></li>
-            <li><a href="/logout">Logout</a></li>
-          </ul>
+        {/* <aside id="sidebar" className="sidebar"> */}
+      <ul className="sidebar-nav" id="sidebar-nav">
+        <li className="nav-item">
+          <a className="nav-link collapsed" href="/">
+            <i className="bi bi-grid"></i>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        {role === 'superadmin' && (
+          <React.Fragment>
+       
+            <li className="nav-item">
+              <a className="nav-link collapsed" href="../users">
+                <i className="bi bi-person"></i>
+                <span>Manage Users</span>
+              </a>
+            </li>
+            <li className="nav-item">
+              <a className="nav-link collapsed" href="../event">
+                <i className="bi bi-journal-text"></i>
+                <span>Manage Posts</span>
+              </a>
+            </li>
+
+            <li className="nav-item">
+              <a className="nav-link collapsed" href="../gives">
+              <i class="bi bi-dash-circle"></i>
+                <span>Manage Amaturo</span>
+              </a>
+            </li>
+
+            <li className="nav-item">
+              <a className="nav-link collapsed" href="../chair">
+                <i className="bi bi-journal-text"></i>
+                <span>Manage korari</span>
+              </a>
+            </li>
+
+            <li className="nav-item">
+          <a className="nav-link collapsed" href="../settings">
+            <i className="bi bi-gear"></i>
+            <span>Settings</span>
+          </a>
+        </li>
+           
+          </React.Fragment>
+        )}
+
+{role === 'user' && (
+          <React.Fragment>
+            <li className="nav-item">
+              <a className="nav-link collapsed" href="../profile">
+                <i className="bi bi-person-circle"></i>
+                <span>Profile</span>
+              </a>
+            </li>
+
+            <li className="nav-item">
+              <a className="nav-link collapsed" href="../users">
+                <i className="bi bi-person"></i>
+                <span>Manage Users</span>
+              </a>
+            </li>
+            <li className="nav-item">
+              <a className="nav-link collapsed" href="../event">
+                <i className="bi bi-journal-text"></i>
+                <span>Manage Posts</span>
+              </a>
+            </li>
+
+            <li className="nav-item">
+              <a className="nav-link collapsed" href="../chair">
+                <i className="bi bi-journal-text"></i>
+                <span>Manage korari</span>
+              </a>
+            </li>
+          
+          </React.Fragment>
+        )}
+
+  
+
+        <li className="nav-item">
+          <a className="nav-link collapsed" href="../logout">
+            <i className="bi bi-box-arrow-right"></i>
+            <span>Logout</span>
+          </a>
+        </li>
+        </ul>
+    {/* </aside> */}
         </Offcanvas.Body>
       </Offcanvas>
     </>
