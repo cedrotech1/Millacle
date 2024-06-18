@@ -214,13 +214,13 @@ useEffect(() => {
                             </div>
                           </div>
                           <div className="form-floating mb-3">
-  <select className="form-select" name="admin" value={formData.admin} onChange={handleChange}>
-    {users.map(user => (
-      <option key={user.id} value={user.id}>{`${user.firstname} ${user.lastname}`}</option>
-    ))}
-  </select>
-  <label htmlFor="floatingAdmin">Select Admin</label>
-</div>
+                              <select className="form-select" name="admin" value={formData.admin} onChange={handleChange}>
+                                {users.map(user => (
+                                  <option key={user.id} value={user.id}>{`${user.firstname} ${user.lastname}`}</option>
+                                ))}
+                              </select>
+                              <label htmlFor="floatingAdmin">Select Admin</label>
+                            </div>
 
                           <div className="modal-footer">
                             <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -246,7 +246,7 @@ useEffect(() => {
               {korari.length > 0 ? (
                 <div className="card">
                   <div className="card-body table-responsive">
-                    <h5 className="card-title">List of event Chairs</h5>
+                    <h5 className="card-title">List of  Chairs</h5>
                     <table className="table datatable">
                       <thead>
                         <tr>

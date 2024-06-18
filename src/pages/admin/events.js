@@ -303,7 +303,9 @@ function Home() {
                         <tr>
                           <th><b>no</b></th>
                           <th>Title</th>
-                          <th data-type="date" data-format="YYYY/DD/MM">dates/time</th>  </tr>
+                          <th data-type="date" data-format="YYYY/DD/MM">dates/time</th> 
+                          <th>view</th>
+                           </tr>
                       </thead>
                       <tbody>
                         {loading ? (
@@ -338,7 +340,9 @@ function Home() {
                         <tr>
                           <th><b>no</b></th>
                           <th>Title</th>
-                          <th data-type="date" data-format="YYYY/DD/MM">dates/time</th>  </tr>
+                          <th data-type="date" data-format="YYYY/DD/MM">dates/time</th> 
+                          <th>view</th>
+                           </tr>
                       </thead>
                       <tbody>
                         {loading ? (
@@ -370,7 +374,9 @@ function Home() {
                         <tr>
                           <th><b>no</b></th>
                           <th>pictues</th>
-                          <th data-type="date" data-format="YYYY/DD/MM">dates/time</th>  </tr>
+                          <th data-type="date" data-format="YYYY/DD/MM">dates/time</th> 
+                           <th>view</th>
+                           </tr>
                       </thead>
                       <tbody>
                         {loading ? (

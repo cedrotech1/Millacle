@@ -3,15 +3,16 @@ import React, { useState } from 'react';
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate,useParams} from 'react-router-dom';
 // import LoadingSpinner from '../../components/loading'; 
 
 import 'react-toastify/dist/ReactToastify.css'
 function Sidebar() {
   const navigate = useNavigate();
+  const { email } = useParams();
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
+    newPassword: '',
+    confirmPassword: '',
     
   });
 
@@ -19,12 +20,11 @@ function Sidebar() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData)
 
     try {
       setLoading(true);
-      const response = await fetch(`${process.env.REACT_APP_BASE_URL}/api/v1/auth/login`, {
-        method: 'POST',
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}/api/v1/users/resetPassword/${email}`, {
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -36,19 +36,11 @@ function Sidebar() {
       if (response.ok) {
         const res = await response.json();
         toast.success(res.message);
-
-        localStorage.setItem('token', res.token);
-        localStorage.setItem('user', JSON.stringify(res.user));
-
-        const role = res.user.role;
         await new Promise((resolve) => setTimeout(resolve, 2000));
 
-        if (role === 'superadmin' || role === 'user'  ) {
-          await navigate('/');
-        } else {
-          await navigate('../no');
-        } 
-     
+
+          await navigate('../login');
+    
       } else {
         const errorData = await response.json();
         toast.error(errorData.message);
@@ -83,35 +75,35 @@ function Sidebar() {
               <div class="card-body">
 
                 <div class="pt-4 pb-2">
-                  <h5 class="card-title text-center pb-0 fs-4">Login to Your Account</h5>
+                  <h5 class="card-title text-center pb-0 fs-4">Now, Reset your Password</h5>
                   
                 </div>
 
                 <form onSubmit={handleSubmit}   class="row g-3 needs-validation" novalidate>
 
-                  <div class="col-12">
-                    <label for="yourUsername" class="form-label">Email</label>
-                    <div class="input-group has-validation">
-                      <span class="input-group-text" id="inputGroupPrepend">@</span>
-                      <input type="email" name="email" class="form-control" id="yourUsername" onChange={handleChange} required/>
-                      <div class="invalid-feedback">Please enter your username.</div>
-                    </div>
-                  </div>
+              
 
                   <div class="col-12">
-                    <label for="yourPassword" class="form-label">Password</label>
-                    <input type="password" name="password" class="form-control" id="yourPassword"  onChange={handleChange} required/>
+                    <label for="yourPassword" class="form-label">New Password</label>
+                    <input type="password" name="newPassword" class="form-control" id="yourPassword"  onChange={handleChange} required/>
                     <div class="invalid-feedback">Please enter your password!</div>
                   </div>
 
                   <div class="col-12">
-                    <a href='./reset'> <label class="form-check-label"  for="rememberMe">reset password</label></a>
+                    <label for="yourPassword" class="form-label">Confirm Password</label>
+                    <input type="password" name="confirmPassword" class="form-control" id="yourPassword"  onChange={handleChange} required/>
+                    <div class="invalid-feedback">Please enter your password!</div>
                   </div>
-                
+
                   <div class="col-12">
-                 
-                    <button  type="submit" className={`btn btn-primary d-block w-100 ${loading ? 'loading' : ''}`} disabled={loading}>
-              {loading ? 'loading....': 'login'}</button>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" name="remember" value="true"  onChange={handleChange} id="rememberMe"/>
+                      <label class="form-check-label" for="rememberMe">Remember me</label>
+                    </div>
+                  </div>
+                  <div class="col-12">
+                  <button  type="submit" className={`btn btn-primary d-block w-100 ${loading ? 'loading' : ''}`} disabled={loading}>
+              {loading ? 'loading....': 'reset password'}</button>
                   </div>
                 
                 </form>

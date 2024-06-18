@@ -11,6 +11,8 @@ function OneChair() {
   const navigate = useNavigate();
   const [korari, setKorari] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [formData, setFormData] = useState({ name: '', file: null });
+  const [editLoading, setEditLoading] = useState(false);
 
   useEffect(() => {
     const fetchKorari = async () => {
@@ -29,7 +31,7 @@ function OneChair() {
 
         if (data.success) {
           setKorari(data.data);
-          console.log(data.data);
+          setFormData({ name: data.data.korari.name, file: null });
         } else {
           toast.error('Failed to fetch korari details');
         }
@@ -43,26 +45,15 @@ function OneChair() {
     };
 
     fetchKorari();
-  }, [id]);
+  }, [id, navigate]);
 
   const handleView = (postId) => {
     navigate(`../onePost/${postId}`);
   };
 
-  if (loading) {
-    return <LoadingSpinner />;
-  }
-
-  if (!korari) {
-    return <div>No korari details available</div>;
-  }
-
-  const { korari: korariDetails, allposts } = korari;
-  const { event, blog, pic } = allposts;
-
   const handleDelete = async (userId) => {
     try {
-      const isConfirmed = window.confirm('Are you sure you want to delete this korari ?');
+      const isConfirmed = window.confirm('Are you sure you want to delete this korari?');
       if (!isConfirmed) {
         return;
       }
@@ -85,9 +76,73 @@ function OneChair() {
         toast.error(errorData.message);
       }
     } catch (error) {
-      console.error('Error deleting user:', error);
+      console.error('Error deleting korari:', error);
     }
   };
+
+  const handleChange = (e) => {
+    const { name, value, files } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: files ? files[0] : value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setEditLoading(true);
+
+    const form = new FormData();
+    form.append('name', formData.name);
+    if (formData.file) {
+      form.append('file', formData.file);
+    }
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}/api/v1/Korari/update/${id}`, {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: form,
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        toast.success('Korari updated successfully');
+        await navigate('../chair');
+        setKorari((prevKorari) => ({
+          ...prevKorari,
+          korari: {
+            ...prevKorari.korari,
+            name: formData.name,
+            file: result.data.file || prevKorari.korari.file,
+          },
+          
+        }));
+      } else {
+        toast.error(result.message);
+      }
+    } catch (error) {
+      console.error('Error updating korari:', error);
+      toast.error('Error updating korari');
+    } finally {
+      setEditLoading(false);
+    }
+  };
+
+  if (loading) {
+    return <LoadingSpinner />;
+  }
+
+  if (!korari) {
+    return <div>No korari details available</div>;
+  }
+
+  const { korari: korariDetails, allposts } = korari;
+  const { event, blog, pic } = allposts;
 
   return (
     <>
@@ -104,64 +159,102 @@ function OneChair() {
         </div>
 
         <section className="section">
-          <div className="row">
-            <div className="col-lg-12">
+          <div className="modal fade" id="disablebackdrop" tabIndex="-1" data-bs-backdrop="false">
+            <div className="modal-dialog">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="modal-title">EDIT KORARI</h5>
+                  <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div className="modal-body">
+                  <div className="card">
+                    <div className="card-body">
+                      <form onSubmit={handleSubmit}>
+                        <div className="row mb-3">
+                          <div className="col-sm-12">
+                            <br />
+                            <div className="form-floating mb-3">
+                              <input
+                                type="text"
+                                name="name"
+                                className="form-control"
+                                id="floatingTitle"
+                                placeholder="name"
+                                value={formData.name}
+                                onChange={handleChange}
+                              />
+                              <label htmlFor="floatingTitle">Name</label>
+                            </div>
+                            <div className="form-floating mb-3">
+                              <input
+                                type="file"
+                                className="form-control"
+                                id="floatingFile"
+                                name="file"
+                                onChange={handleChange}
+                              />
+                              <label htmlFor="floatingFile">Upload Image</label>
+                            </div>
+                          </div>
+                        </div>
 
-              {/* <div className="card mb-3">
-                <div className="card-body">
-                  <h5 className="card-title">Korari Information</h5>
-                  <div className="row g-0">
-                    <div className="col-md-4">
-                      <img src={korariDetails.file} className="img-fluid rounded-start" alt={korariDetails.name} />
-                    </div>
-                    <div className="col-md-8">
-                      <div className="card-body">
-                        <h5 className="card-title">{korariDetails.name}</h5>
-                        <p className="card-text">
-                          Admin: {korariDetails.KorariUser.firstname} {korariDetails.KorariUser.lastname}<br />
-                          Email: {korariDetails.KorariUser.email}
-                        </p>
-                        <p className="card-text"><small className="text-muted">Created at: {new Date(korariDetails.createdAt).toLocaleString()}</small></p>
-                      </div>
+                        <div className="modal-footer">
+                          <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                          <button type="submit" className={`btn btn-primary d-block ${editLoading ? 'loading' : ''}`} disabled={editLoading}>
+                            {editLoading ? 'Loading...' : 'Save'}
+                          </button>
+                        </div>
+                      </form>
                     </div>
                   </div>
-                </div>
-              </div> */}
-               <div className="row">
-            <div className="col-lg-6">
-              <div className="card">
-                <div className="card-body">
-                 
-                  {korariDetails && korariDetails.file!='null' ? (
-                     <img src={korariDetails.file} alt="Korari Image" className="phone-1" style={{ width: '100%', paddingTop: '0.5cm', borderRadius: '1%' }} />
-                  ) : (
-                    <img src='../assets/img/nopic.png' alt="Korari Image" className="phone-1" style={{ width: '100%', paddingTop: '0.5cm', borderRadius: '1%' }} />
-                  )}
-
-
-                </div>
-              </div>
-            </div>
-
-            <div className="col-lg-6">
-              <div className="card">
-                <div className="card-body">
-                  <h5 className="card-title">Korari Information</h5>
-                  <p><strong>Name:</strong> {korariDetails.name}</p>
-                  <p><strong>Created At:</strong> {new Date(korariDetails.createdAt).toLocaleString()}</p>
-                  <br/>
-                  <h5>Chair Admin</h5>
-                  <p><strong>Names:</strong> {korariDetails.KorariUser.firstname} {korariDetails.KorariUser.lastname}</p>
-                  <p><strong>Email:</strong> {korariDetails.KorariUser.email}</p>
-
-                  <button className='btn btn-outline-danger' onClick={() => handleDelete(korariDetails.id)}>Delete Korari</button>
-
-
                 </div>
               </div>
             </div>
           </div>
-          <br/>
+
+          <div className="row">
+            <div className="col-lg-12">
+              <div className="row">
+                <div className="col-lg-6">
+                  <div className="card">
+                    <div className="card-body">
+                    {korariDetails && korariDetails.file && korariDetails.file !== 'null' ? (
+                        <img
+                          src={korariDetails.file}
+                          alt="Korari Image"
+                          className="phone-1"
+                          style={{ width: '100%', paddingTop: '0.5cm', borderRadius: '1%' }}
+                        />
+                      ) : (
+                        <img
+                          src="../assets/img/nopic.png"
+                          alt="Korari Image"
+                          className="phone-1"
+                          style={{ width: '100%', paddingTop: '0.5cm', borderRadius: '1%' }}
+                        />
+                      )}
+
+                    </div>
+                  </div>
+                </div>
+
+                <div className="col-lg-6">
+                  <div className="card">
+                    <div className="card-body">
+                      <h5 className="card-title">Korari Information</h5>
+                      <p><strong>Name:</strong> {korariDetails.name}</p>
+                      <p><strong>Created At:</strong> {new Date(korariDetails.createdAt).toLocaleString()}</p>
+                      <br />
+                      <h5>Chair Admin</h5>
+                      <p><strong>Names:</strong> {korariDetails.KorariUser.firstname} {korariDetails.KorariUser.lastname}</p>
+                      <p><strong>Email:</strong> {korariDetails.KorariUser.email}</p>
+                      <button className="btn btn-outline-danger" onClick={() => handleDelete(korariDetails.id)}>Delete Korari</button>
+                     &nbsp; <button className="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#disablebackdrop">Edit Korari</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <br />
 
               {event.length > 0 ? (
                 <div className="card mb-3">
@@ -172,35 +265,37 @@ function OneChair() {
                         <tr>
                           <th>ID</th>
                           <th>Title</th>
-                          <th>Date & Time</th>
+                          <th>Start Date</th>
+                          <th>End Date</th>
+                          <th>Created At</th>
                           <th>Action</th>
                         </tr>
                       </thead>
                       <tbody>
-                        {loading ? (
-                          <LoadingSpinner />
-                        ) : (
-                          event.map((e) => (
-                            <tr key={e.id}>
-                              <td>{e.id}</td>
-                              <td>{e.title}</td>
-                              <td>{`${e.date} ${e.time}`}</td>
-                              <td>
-                                <button className='btn btn-outline-primary' onClick={() => handleView(e.id)}>View</button>
-                              </td>
-                            </tr>
-                          ))
-                        )}
+                        {event.map((post) => (
+                          <tr key={post.id}>
+                            <td>{post.id}</td>
+                            <td>{post.title}</td>
+                            <td>{new Date(post.startdate).toLocaleString()}</td>
+                            <td>{new Date(post.enddate).toLocaleString()}</td>
+                            <td>{new Date(post.createdAt).toLocaleString()}</td>
+                            <td>
+                              <button className="btn btn-outline-primary" onClick={() => handleView(post.id)}>
+                                View
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
                       </tbody>
                     </table>
                   </div>
                 </div>
               ) : (
-                <center>
-                  {/* No Events available */}
-                  </center>
+                <p>
+                  {/* No associated events found. */}
+                  </p>
               )}
-  <br/>
+
               {blog.length > 0 ? (
                 <div className="card mb-3">
                   <div className="card-body table-responsive">
@@ -210,35 +305,31 @@ function OneChair() {
                         <tr>
                           <th>ID</th>
                           <th>Title</th>
-                          <th>Date & Time</th>
+                          <th>Created At</th>
                           <th>Action</th>
                         </tr>
                       </thead>
                       <tbody>
-                        {loading ? (
-                          <LoadingSpinner />
-                        ) : (
-                          blog.map((b) => (
-                            <tr key={b.id}>
-                              <td>{b.id}</td>
-                              <td>{b.title}</td>
-                              <td>{`${b.date} ${b.time}`}</td>
-                              <td>
-                                <button className='btn btn-outline-primary' onClick={() => handleView(b.id)}>View</button>
-                              </td>
-                            </tr>
-                          ))
-                        )}
+                        {blog.map((post) => (
+                          <tr key={post.id}>
+                            <td>{post.id}</td>
+                            <td>{post.title}</td>
+                            <td>{new Date(post.createdAt).toLocaleString()}</td>
+                            <td>
+                              <button className="btn btn-outline-primary" onClick={() => handleView(post.id)}>
+                                View
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
                       </tbody>
                     </table>
                   </div>
                 </div>
               ) : (
-                <center>
-                  {/* No Blogs available */}
-                  </center>
+                <p></p>
               )}
-  <br/>
+
               {pic.length > 0 ? (
                 <div className="card mb-3">
                   <div className="card-body table-responsive">
@@ -247,43 +338,37 @@ function OneChair() {
                       <thead>
                         <tr>
                           <th>ID</th>
-                          <th>picture</th>
-                          <th>Date & Time</th>
+                          <th>Title</th>
+                          <th>Created At</th>
                           <th>Action</th>
                         </tr>
                       </thead>
                       <tbody>
-                        {loading ? (
-                          <LoadingSpinner />
-                        ) : (
-                          pic.map((p) => (
-                            <tr key={p.id}>
-                              <td>{p.id}</td>
-                              <td>
-                              <img src={p.file} alt="Image" class="phone-1" data-aos="fade-right" style={{ height: '1.5cm', width: '1.5cm', borderRadius: '10%' }} />
-                                </td>
-                              <td>{`${p.date} ${p.time}`}</td>
-                              <td>
-                                <button className='btn btn-outline-primary' onClick={() => handleView(p.id)}>View</button>
-                              </td>
-                            </tr>
-                          ))
-                        )}
+                        {pic.map((post) => (
+                          <tr key={post.id}>
+                            <td>{post.id}</td>
+                            <td>{post.title}</td>
+                            <td>{new Date(post.createdAt).toLocaleString()}</td>
+                            <td>
+                              <button className="btn btn-outline-primary" onClick={() => handleView(post.id)}>
+                                View
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
                       </tbody>
                     </table>
                   </div>
                 </div>
               ) : (
-                <center>
-                  {/* No Pics available */}
-                  </center>
+                <p></p>
               )}
             </div>
           </div>
         </section>
-
-        <ToastContainer />
       </main>
+
+      <ToastContainer />
     </>
   );
 }

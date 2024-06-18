@@ -107,7 +107,7 @@ function Header() {
       <header id="header" className="header fixed-top d-flex align-items-center">
         <div className="d-flex align-items-center justify-content-between">
           <a href="/" className="logo d-flex align-items-center">
-            <img src="assets/img/logo.png" alt=""/>
+            {/* <img src="assets/img/logo.png" alt=""/> */}
             <span className="d-none d-lg-block">Millacle</span>
           </a>
           <i className="bi bi-list toggle-sidebar-btn" onClick={handleToggleSidebar}></i>
@@ -121,54 +121,29 @@ function Header() {
           <ul className="d-flex align-items-center">
             <li className="nav-item d-block d-lg-none">
               <a className="nav-link nav-icon search-bar-toggle" href="#">
-                <i className="bi bi-search"></i>
+
               </a>
             </li>
 
-            <li className="nav-item dropdown">
-              <a className="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
-                <i className="bi bi-bell"></i>
-                <span className="badge bg-primary badge-number">4</span>
-              </a>
+     
 
-            
-            </li>
+     
 
-            <li className="nav-item dropdown">
-              <a className="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
-                <i className="bi bi-chat-left-text"></i>
-                <span className="badge bg-success badge-number">3</span>
-              </a>
+            <li className="nav-item dropdown pe-1">
+  <a className="nav-link nav-profile d-flex align-items-center pe-0" href="../profile">
+    {loading ? (
+      <div>Loading...</div>
+    ) : (
+      user && (
+        <>
+          <img src={user.file || 'assets/img/v.jpg'} alt="Profile" className="rounded-circle" style={{ height: '1.2cm', width: '1.2cm' }} />
+          <span className="ps-2 d-md-inline d-none">{user.firstname}</span>
+        </>
+      )
+    )}
+  </a>
+</li>
 
-              <ul className="dropdown-menu dropdown-menu-end dropdown-menu-arrow messages">
-                <li className="dropdown-header">
-                  You have 3 new messages
-                  <a href="#"><span className="badge rounded-pill bg-primary p-2 ms-2">View all</span></a>
-                </li>
-            
-              </ul>
-            </li>
-
-            <li className="nav-item dropdown pe-3">
-              <a className="nav-link nav-profile d-flex align-items-center pe-0" href="../profile" >
-
-              {loading ? (
-  <div>Loading...</div>
-) : (
-  user && (
-    <>
-    <img src={user.file || 'assets/img/v.jpg'} alt="Profile" className="rounded-circle" style={{height:'1.2cm',width:'1.2cm'}}/>
-    <span className="d-none d-md-block dropdown-toggle ps-2">{user.firstname}</span>
-    </>
-    
-  )
-)}
-
-               
-              </a>
-
-           
-            </li>
           </ul>
         </nav>
       </header>
@@ -176,8 +151,8 @@ function Header() {
       <Offcanvas show={showMenu} onHide={() => setShowMenu(false)} placement="start">
         <Offcanvas.Header closeButton>
           <Offcanvas.Title>
-            <a href="index.html">
-              <img src="assets/img/logo.png" alt="" className="img-fluid" />
+            <a href="/">
+              {/* <img src="assets/img/logo.png" alt="" className="img-fluid" /> */}
             </a>
           </Offcanvas.Title>
         </Offcanvas.Header>
