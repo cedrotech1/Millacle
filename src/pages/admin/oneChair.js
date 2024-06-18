@@ -246,8 +246,8 @@ function OneChair() {
                       <p><strong>Created At:</strong> {new Date(korariDetails.createdAt).toLocaleString()}</p>
                       <br />
                       <h5>Chair Admin</h5>
-                      {/* <p><strong>Names:</strong> {korariDetails.KorariUser.firstname} {korariDetails.KorariUser.lastname}</p>
-                      <p><strong>Email:</strong> {korariDetails.KorariUser.email}</p> */}
+                      <p><strong>Names:</strong> {korariDetails.KorariUser.firstname} {korariDetails.KorariUser.lastname}</p>
+                      <p><strong>Email:</strong> {korariDetails.KorariUser.email}</p>
                       <button className="btn btn-outline-danger" onClick={() => handleDelete(korariDetails.id)}>Delete Korari</button>
                      &nbsp; <button className="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#disablebackdrop">Edit Korari</button>
                     </div>

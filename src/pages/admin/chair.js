@@ -11,7 +11,7 @@ function Home() {
   const [formData, setFormData] = useState({
     file: null,
     name: '',
-    admin: 2,
+    admin: null,
   });
   const [loading, setLoading] = useState(false);
 
@@ -90,7 +90,7 @@ useEffect(() => {
         setFormData({
           file: null,
           name: '',
-          admin: 2, // Reset admin selection or set default as needed
+          admin: '', // Reset admin selection or set default as needed
         });
         window.location.reload();
       } else {
