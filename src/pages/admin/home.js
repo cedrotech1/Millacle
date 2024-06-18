@@ -18,7 +18,7 @@ function Home() {
     const fetchStatistics = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch('http://localhost:4000/api/v1/Korari/statistic', {
+        const response = await fetch(`${process.env.REACT_APP_BASE_URL}/api/v1/Korari/statistic`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
