@@ -67,7 +67,7 @@ function Home() {
     e.preventDefault();
 
     // Validate form data
-    if (!formData.file || !formData.name || !formData.admin) {
+    if (!formData.name || !formData.admin) {
       toast.error('Please fill in all fields.');
       return;
     }
