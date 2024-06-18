@@ -11,7 +11,7 @@ function Home() {
   const [formData, setFormData] = useState({
     file: null,
     name: '',
-    admin: null,
+    admin: '',
   });
   const [loading, setLoading] = useState(false);
 
@@ -20,34 +20,33 @@ function Home() {
 
   const [users, setUsers] = useState([]);
 
-useEffect(() => {
-  const fetchUsers = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`${process.env.REACT_APP_BASE_URL}/api/v1/users?role=user`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${process.env.REACT_APP_BASE_URL}/api/v1/users?role=user`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
-      const data = await response.json();
+        const data = await response.json();
 
-      if (data.success) {
-        setUsers(data.users);
-      } else {
-        console.error('Failed to fetch users:', data.message);
+        if (data.success) {
+          setUsers(data.users);
+        } else {
+          console.error('Failed to fetch users:', data.message);
+        }
+
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching users:', error);
+        setLoading(false);
       }
+    };
 
-      setLoading(false);
-    } catch (error) {
-      console.error('Error fetching users:', error);
-      setLoading(false);
-    }
-  };
-
-  fetchUsers();
-}, []);
-
+    fetchUsers();
+  }, []);
 
   const handleChange = (e) => {
     if (e.target.name === 'file') {
@@ -66,15 +65,21 @@ useEffect(() => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
+    // Validate form data
+    if (!formData.file || !formData.name || !formData.admin) {
+      toast.error('Please fill in all fields.');
+      return;
+    }
+
     try {
       setLoading(true);
-  
+
       const formDataToSend = new FormData();
       formDataToSend.append('file', formData.file);
       formDataToSend.append('name', formData.name);
       formDataToSend.append('admin', formData.admin); // Assuming formData.admin holds the selected admin ID
-  
+
       const response = await fetch(`${process.env.REACT_APP_BASE_URL}/api/v1/Korari/add`, {
         method: 'POST',
         headers: {
@@ -82,7 +87,7 @@ useEffect(() => {
         },
         body: formDataToSend,
       });
-  
+
       if (response.ok) {
         const res = await response.json();
         toast.success(res.message);
@@ -106,7 +111,6 @@ useEffect(() => {
       setLoading(false);
     }
   };
-  
 
   const [korari, setkorari] = useState([]);
 
@@ -158,8 +162,7 @@ useEffect(() => {
       console.error('User object not found in local storage');
     }
   }, []);
-  
-  
+  console.log(formData);
 
   return (
     <>
@@ -181,11 +184,11 @@ useEffect(() => {
             <div className='col-md-4'></div>
             <div className='col-md-4'>
               
-            {role === 'superadmin' && (
-              <button type="button" className="btn btn-primary col-md-12" data-bs-toggle="modal" data-bs-target="#disablebackdrop">
-               Add Chair
-              </button>
-                 )}
+              {role === 'superadmin' && (
+                <button type="button" className="btn btn-primary col-md-12" data-bs-toggle="modal" data-bs-target="#disablebackdrop">
+                  Add Chair
+                </button>
+              )}
            
             </div>
 
@@ -205,7 +208,7 @@ useEffect(() => {
                               <br/>
                               <div className="form-floating mb-3">
                                 <input type="text" name='name' className="form-control" id="floatingTitle" placeholder="name" value={formData.name} onChange={handleChange} />
-                                <label htmlFor="floatingTitle">name</label>
+                                <label htmlFor="floatingTitle">Name</label>
                               </div>
                               <div className="form-floating mb-3">
                                 <input type="file" className="form-control" id="floatingFile" name='file' onChange={handleChange} />
@@ -214,13 +217,14 @@ useEffect(() => {
                             </div>
                           </div>
                           <div className="form-floating mb-3">
-                              <select className="form-select" name="admin" value={formData.admin} onChange={handleChange}>
-                                {users.map(user => (
-                                  <option key={user.id} value={user.id}>{`${user.firstname} ${user.lastname}`}</option>
-                                ))}
-                              </select>
-                              <label htmlFor="floatingAdmin">Select Admin</label>
-                            </div>
+                            <select className="form-select" name="admin" value={formData.admin} onChange={handleChange}>
+                              <option value="" disabled>Select Admin</option>
+                              {users.map(user => (
+                                <option key={user.id} value={user.id}>{`${user.firstname} ${user.lastname}`}</option>
+                              ))}
+                            </select>
+                            <label htmlFor="floatingAdmin">Select Admin</label>
+                          </div>
 
                           <div className="modal-footer">
                             <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -246,7 +250,7 @@ useEffect(() => {
               {korari.length > 0 ? (
                 <div className="card">
                   <div className="card-body table-responsive">
-                    <h5 className="card-title">List of  Chairs</h5>
+                    <h5 className="card-title">List of Chairs</h5>
                     <table className="table datatable">
                       <thead>
                         <tr>
@@ -265,13 +269,11 @@ useEffect(() => {
                               <td>{Chair.id}</td>
                               <td>{Chair.name}</td>
                               <td>
-
-                              {Chair && Chair.file!='null' ? (
-                    <img src={Chair.file} alt="Image" className="phone-1" data-aos="fade-right" style={{ height: '1.5cm', width: '1.5cm', borderRadius: '10%' }} />
-                  ) : (
-                    <img src='../assets/img/nopic.png' alt="Image" className="phone-1" data-aos="fade-right" style={{ height: '1.5cm', width: '1.5cm', borderRadius: '10%' }} />
-                  )}
-                               
+                                {Chair && Chair.file !== 'null' ? (
+                                  <img src={Chair.file} alt="Image" className="phone-1" data-aos="fade-right" style={{ height: '1.5cm', width: '1.5cm', borderRadius: '10%' }} />
+                                ) : (
+                                  <img src='../assets/img/nopic.png' alt="Image" className="phone-1" data-aos="fade-right" style={{ height: '1.5cm', width: '1.5cm', borderRadius: '10%' }} />
+                                )}
                               </td>
                               <td>
                                 <button className='btn btn-outline-primary' onClick={() => handleView(Chair.id)}>View</button>
@@ -285,7 +287,7 @@ useEffect(() => {
                 </div>
               ) : (
                 <center>
-
+                  No Chairs found.
                 </center>
               )}
             </div>
