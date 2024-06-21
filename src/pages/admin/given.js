@@ -113,7 +113,7 @@ function Home() {
                           <td>{transaction.amount} Rwf</td>
                           <td>{transaction.provider}</td>
                           {/* <td>{new Date(transaction.timestamp).toLocaleDateString()}</td> */}
-                          <td>{transaction.fee}</td>
+                          <td>{transaction.fee} Rwf</td>
                           <td>{transaction.amount - transaction.fee} Rwf</td>
                         </tr>
                       ))}
