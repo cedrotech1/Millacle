@@ -110,7 +110,7 @@ function Home() {
                       <p><strong>Created At:</strong> {new Date(user.createdAt).toLocaleString()}</p>
                       <p><strong>Updated At:</strong> {new Date(user.updatedAt).toLocaleString()}</p>
                       <button className='btn btn-outline-danger m-2' onClick={() => handleDelete(user.id)}>Delete User</button>
-                      <button className='btn btn-outline-success' onClick={() => handleUpdate(user.id)}>Edit User</button>
+                      {/* <button className='btn btn-outline-success' onClick={() => handleUpdate(user.id)}>Edit User</button> */}
                     </>
                   )}
                 </div>

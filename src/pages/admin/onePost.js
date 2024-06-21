@@ -194,8 +194,15 @@ function Home() {
                   <h5 className="card-title">Post Information</h5>
                   {post.length > 0 && (
                     <>
-                      <p><strong>Title:</strong> {post[0].title}</p>
-                      <p><strong>Description:</strong> {post[0].description}</p>
+                    {
+                      post[0].type=='pic'? 
+                      <></>
+                      :<>
+                        <p><strong>Title:</strong> {post[0].title}</p>
+                        <p><strong>Description:</strong> {post[0].description}</p></>
+
+                    }
+                    
                       <p><strong>Date:</strong> {post[0].date}, {post[0].time}</p>
 
                       {post[0].PostsUser && (

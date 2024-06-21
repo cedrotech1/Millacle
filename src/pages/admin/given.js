@@ -1,178 +1,159 @@
-// Sidebar.js
-import React from 'react';
-// import 'datatables.net-dt/css/jquery.dataTables.css';
+import React, { useState, useEffect } from 'react';
 
 function Home() {
+  const [transactions, setTransactions] = useState([]);
+  const [account, setAccount] = useState({});
+  const [offset, setOffset] = useState(0);
+  const [limit, setLimit] = useState(10);  // Adjust the limit as needed
+  const [totalPages, setTotalPages] = useState(0);
+  const token = localStorage.getItem('token');
+
+  const fetchTransactions = async (offset, limit) => {
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}/api/v1/payment/transactions?offset=${offset}&limit=${limit}`, {
+        headers: {
+          'accept': '*/*',
+          Authorization: `Bearer ${token}`,
+        }
+      });
+      const data = await response.json();
+      setTransactions(data.transactions);
+      setTotalPages(Math.ceil(data.total / limit));
+    } catch (error) {
+      console.error('Error fetching transactions:', error);
+    }
+  };
+
+  const fetchAccountInfo = async () => {
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}/api/v1/payment/account`, {
+        headers: {
+          'accept': '*/*',
+          Authorization: `Bearer ${token}`,
+        }
+      });
+      const data = await response.json();
+      setAccount(data);
+    } catch (error) {
+      console.error('Error fetching account information:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchTransactions(offset, limit);
+    fetchAccountInfo();
+  }, [offset, limit]);
+
+  const handleNextPage = () => {
+    setOffset((prevOffset) => prevOffset + limit);
+  };
+
+  const handlePreviousPage = () => {
+    setOffset((prevOffset) => Math.max(prevOffset - limit, 0));
+  };
+
   return (
-   <>
- <main id="main" class="main">
-
-<div class="pagetitle">
-  <h1>Blank Page</h1>
-  <nav>
-    <ol class="breadcrumb">
-      <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-      <li class="breadcrumb-item">Pages</li>
-      <li class="breadcrumb-item active">Blank</li>
-    </ol>
-  </nav>
-</div>
-
-<section class="section">
-  <div class="row">
-
-              <div className='col-md-4'> </div>
-              <div className='col-md-4'> </div>
-              <div className='col-md-4'> 
-              
-  <button type="button" class="btn btn-primary col-md-12" data-bs-toggle="modal" data-bs-target="#disablebackdrop">
-                add users
-              </button> 
-              
-              </div>
-
-             
-
-             
-              <div class="modal fade" id="disablebackdrop" tabindex="-1" data-bs-backdrop="false">
-                <div class="modal-dialog">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h5 class="modal-title">ADD USERS</h5>
-                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                    <div class="card">
-            <div class="card-body">
-              {/* <h5 class="card-title">Advanced Form Elements</h5> */}
-
-              {/* <!-- Advanced Form Elements --> */}
-              <form>
-            
-
-              <div class="row mb-3">
-                  {/* <label class="col-sm-2 col-form-label">Floating labels</label> */}
-                
-                  <div class="col-sm-12">
-                  <br/> <div class="form-floating mb-3">
-                      <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com"/>
-                      <label for="floatingInput">Email address</label>
-                    </div>
-                    <div class="form-floating mb-3">
-                      <input type="password" class="form-control" id="floatingPassword" placeholder="Password"/>
-                      <label for="floatingPassword">Password</label>
-                    </div>
-                    <div class="form-floating mb-3">
-                      <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea"></textarea>
-                      <label for="floatingTextarea">Comments</label>
-                    </div>
-                    <div class="form-floating mb-3">
-                      <select class="form-select" id="floatingSelect" aria-label="Floating label select example">
-                        <option selected>Open this select menu</option>
-                        <option value="1">One</option>
-                        <option value="2">Two</option>
-                        <option value="3">Three</option>
-                      </select>
-                      <label for="floatingSelect">Works with selects</label>
-                    </div>
-                  </div>
-                </div>
-
-              </form>
-
-            </div>
-          </div>
-                    </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                      <button type="button" class="btn btn-primary">Save changes</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-        
- 
-  </div>
-</section>
-
-<section class="section">
-      <div class="row">
-        <div class="col-lg-12">
-        <br/>
-          <div class="card">
-            <div class="card-body table-responsive">
-              <h5 class="card-title">list of users</h5>
-         
-              <table class="table datatable">
-                <thead>
-                  <tr>
-                    <th>
-                      <b>N</b>ame
-                    </th>
-                    <th>Ext.</th>
-                    <th>City</th>
-                    <th data-type="date" data-format="YYYY/DD/MM">Start Date</th>
-                    <th>Completion</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>Unity Pugh</td>
-                    <td>9958</td>
-                    <td>Curicó</td>
-                    <td>2005/02/11</td>
-                    <td>37%</td>
-                  </tr>
-                  <tr>
-                    <td>Theodore Duran</td>
-                    <td>8971</td>
-                    <td>Dhanbad</td>
-                    <td>1999/04/07</td>
-                    <td>97%</td>
-                  </tr>
-                  <tr>
-                    <td>Kylie Bishop</td>
-                    <td>3147</td>
-                    <td>Norman</td>
-                    <td>2005/09/08</td>
-                    <td>63%</td>
-                  </tr>
-                  <tr>
-                    <td>Willow Gilliam</td>
-                    <td>3497</td>
-                    <td>Amqui</td>
-                    <td>2009/29/11</td>
-                    <td>30%</td>
-                  </tr>
-                  <tr>
-                    <td>Blossom Dickerson</td>
-                    <td>5018</td>
-                    <td>Kempten</td>
-                    <td>2006/11/09</td>
-                    <td>17%</td>
-                  </tr>
-                  <tr>
-                    <td>Elliott Snyder</td>
-                    <td>3925</td>
-                    <td>Enines</td>
-                    <td>2006/03/08</td>
-                    <td>57%</td>
-                    </tr>
-               
-                </tbody>
-              </table>
-              {/* <!-- End Table with stripped rows --> */}
-
-            </div>
-          </div>
-
+    <>
+    {transactions.length>0 ? 
+    <>
+     <main id="main" className="main">
+        <div className="pagetitle">
+          <h1>Amaturo page</h1>
+          <nav>
+            <ol className="breadcrumb">
+              <li className="breadcrumb-item"><a href="index.html">Home</a></li>
+              <li className="breadcrumb-item">Pages</li>
+              <li className="breadcrumb-item active">amaturo</li>
+            </ol>
+          </nav>
         </div>
-      </div>
-    </section>
 
-</main>
-   </>
+        <section className="section">
+          <div className="row">
+            <div className="col-md-4"></div>
+            <div className="col-md-4"></div>
+            <div className="col-md-4">
+              <div className="card">
+                <div className="card-body">
+                  <h5 className="card-title text-center">ACCOUNT INFORMATION</h5>
+                  <h6 className='text-center' style={{ fontSize: '0.5cm', fontFamily: 'monospace', marginTop: '-0.5cm' }}>
+                    {account.name}
+                  </h6>
+                  <p className='text-center'>Balance: {account.balance} Rwf</p>
+                  <p className='text-center'>MTN Balance: {account.mtn_balance} Rwf</p>
+                  <p className='text-center'>Airtel Balance: {account.airtel_balance} Rwf</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="section">
+          <div className="row">
+            <div className="col-lg-12">
+              <br />
+              <div className="card">
+                <div className="card-body table-responsive">
+                  <h5 className="card-title">list of users</h5>
+
+                  <table className="table datatable">
+                    <thead>
+                      <tr>
+                        <th>Amount</th>
+                        <th>Service</th>
+                        {/* <th>Time</th> */}
+                        <th>Fees</th>
+                        <th>Total</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {transactions.map((transaction, index) => (
+                        <tr key={transaction.ref}>
+                          {/* <td>{transaction.user_ref}</td> */}
+                          <td>{transaction.amount} Rwf</td>
+                          <td>{transaction.provider}</td>
+                          {/* <td>{new Date(transaction.timestamp).toLocaleDateString()}</td> */}
+                          <td>{transaction.fee}</td>
+                          <td>{transaction.amount - transaction.fee} Rwf</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  {/* <!-- End Table with stripped rows --> */}
+
+                  <div className="pagination-controls">
+                    <button
+                      className="btn"
+                      onClick={handlePreviousPage}
+                      disabled={offset === 0}
+                    >
+                      Previous
+                    </button>
+                    <span className="page-info">
+                      Page {Math.ceil(offset / limit) + 1} of {totalPages}
+                    </span>
+                    <button
+                      className="btn"
+                      onClick={handleNextPage}
+                      disabled={offset + limit >= totalPages * limit}
+                    >
+                      Next
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+    </>:
+    <>
+    loading...</>
+    
+  }
+     
+    </>
   );
 }
 

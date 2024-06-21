@@ -54,7 +54,7 @@ function Sidebar() {
             </li>
 
             <li className="nav-item">
-              <a className="nav-link collapsed" href="../gives">
+              <a className="nav-link collapsed" href="../given">
               <i class="bi bi-dash-circle"></i>
                 <span>Manage Amaturo</span>
               </a>

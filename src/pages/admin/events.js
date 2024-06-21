@@ -6,7 +6,6 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
 import LoadingSpinner from '../../components/loading';
-import 'react-toastify/dist/ReactToastify.css';
 
 function Home() {
   const [formType, setFormType] = useState('');
@@ -18,23 +17,25 @@ function Home() {
   });
   const [loading, setLoading] = useState(false);
 
-
   const token = localStorage.getItem('token');
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-    if (e.target.name === 'file') {
+    const { name, value, files } = e.target;
+    if (name === 'file') {
       setFormData({
         ...formData,
-        file: e.target.files[0] // assuming only one file is uploaded
+        file: files[0]
       });
     } else {
       setFormData({
         ...formData,
-        [e.target.name]: e.target.value
+        [name]: value
       });
+      if (name === 'type') {
+        setFormType(value);
+      }
     }
-    setFormType(e.target.value);
   };
 
   const handleSubmit = async (e) => {
@@ -60,7 +61,6 @@ function Home() {
       if (response.ok) {
         const res = await response.json();
         toast.success(res.message);
-        // Clear form data after successful submission
         setFormData({
           file: null,
           title: '',
@@ -82,12 +82,9 @@ function Home() {
     }
   };
 
-
-
   const [events, setevents] = useState([]);
   const [blogs, setblogs] = useState([]);
   const [pics, setpics] = useState([]);
-  // const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchclaims = async () => {
@@ -103,16 +100,12 @@ function Home() {
 
         if (data.success) {
           setevents(data.data);
-          // console.log(data.data)
         } else {
           console.error('Failed to fetch claims:', data.message);
         }
-
-        // Set loading to false after fetching data
         setLoading(false);
       } catch (error) {
         console.error('Error fetching claims:', error);
-        // Set loading to false in case of an error
         setLoading(false);
       }
     };
@@ -134,23 +127,18 @@ function Home() {
 
         if (data.success) {
           setpics(data.data);
-          // console.log(data.data)
         } else {
           console.error('Failed to fetch claims:', data.message);
         }
-
-        // Set loading to false after fetching data
         setLoading(false);
       } catch (error) {
         console.error('Error fetching claims:', error);
-        // Set loading to false in case of an error
         setLoading(false);
       }
     };
 
     fetchclaims();
   }, []);
-
 
   useEffect(() => {
     const fetchclaims = async () => {
@@ -166,16 +154,12 @@ function Home() {
 
         if (data.success) {
           setblogs(data.data);
-          // console.log(data.data)
         } else {
           console.error('Failed to fetch claims:', data.message);
         }
-
-        // Set loading to false after fetching data
         setLoading(false);
       } catch (error) {
         console.error('Error fetching claims:', error);
-        // Set loading to false in case of an error
         setLoading(false);
       }
     };
@@ -186,7 +170,6 @@ function Home() {
   const handleView = (id) => {
     navigate(`../onePost/${id}`);
   };
-
 
   return (
     <>
@@ -204,15 +187,14 @@ function Home() {
 
         <section className="section">
           <div className="row">
-            <div className='col-md-4'> {/* Placeholder for content */} </div>
-            <div className='col-md-4'> {/* Placeholder for content */} </div>
+            <div className='col-md-4'></div>
+            <div className='col-md-4'></div>
             <div className='col-md-4'>
               <button type="button" className="btn btn-primary col-md-12" data-bs-toggle="modal" data-bs-target="#disablebackdrop">
                 Add Post
               </button>
             </div>
 
-            {/* Modal Structure */}
             <div className="modal fade" id="disablebackdrop" tabIndex="-1" data-bs-backdrop="false">
               <div className="modal-dialog">
                 <div className="modal-content">
@@ -256,8 +238,9 @@ function Home() {
                           </div>
                           <div className="modal-footer">
                             <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="submit" className={`btn btn-primary d-block  ${loading ? 'loading' : ''}`} disabled={loading}>
-                              {loading ? 'loading....' : 'save'}</button>
+                            <button type="submit" className={`btn btn-primary d-block ${loading ? 'loading' : ''}`} disabled={loading}>
+                              {loading ? 'loading....' : 'save'}
+                            </button>
                           </div>
                         </form>
                       </div>
@@ -266,46 +249,26 @@ function Home() {
                 </div>
               </div>
             </div>
-            {/* End Modal */}
-
           </div>
         </section>
 
         <section className="section">
-        <div class="row">
-              <div class="col-lg-12">
-          <br/>
-                <div class="card" style={{padding:'0.5cm'}}>
-                  <div class="card-body">
-                    <h5 class="card-title" >
-                      <center>
-                     millacle church posts
-                      </center>
-                      </h5>
-                    <p></p>
-                  </div>
-                </div>
-          
-              </div>
-          
-            
-            </div>
           <div className="row">
             <div className="col-lg-12">
               <br />
 
-              {events.length > 0 ? (
+              {events.length > 0 && (
                 <div className="card">
                   <div className="card-body table-responsive">
                     <h5 className="card-title">List of event posts</h5>
                     <table className="table datatable">
                       <thead>
                         <tr>
-                          <th><b>no</b></th>
+                          <th><b>No</b></th>
                           <th>Title</th>
-                          <th data-type="date" data-format="YYYY/DD/MM">dates/time</th> 
-                          <th>view</th>
-                           </tr>
+                          <th>Dates/Time</th>
+                          <th>View</th>
+                        </tr>
                       </thead>
                       <tbody>
                         {loading ? (
@@ -313,36 +276,33 @@ function Home() {
                         ) : (
                           events.map((post) => (
                             <tr key={post.id}>
-                              <td>{post.id}</td>  <td>{post.title}</td><td> {post.date} &nbsp; {post.time}</td>
+                              <td>{post.id}</td>
+                              <td>{post.title}</td>
+                              <td>{post.date} &nbsp; {post.time}</td>
                               <td>
-                                <button className='btn btn-outline-primary' onClick={() => handleView(post.id)}>view</button>
+                                <button className='btn btn-outline-primary' onClick={() => handleView(post.id)}>View</button>
                               </td>
                             </tr>
                           ))
                         )}
-
-
                       </tbody>
                     </table>
                   </div>
                 </div>
-              ) : (
-                <center>
-
-                </center>
               )}
-              {blogs.length > 0 ? (
+
+              {blogs.length > 0 && (
                 <div className="card">
                   <div className="card-body table-responsive">
                     <h5 className="card-title">List of blog posts</h5>
                     <table className="table datatable">
                       <thead>
                         <tr>
-                          <th><b>no</b></th>
+                          <th><b>No</b></th>
                           <th>Title</th>
-                          <th data-type="date" data-format="YYYY/DD/MM">dates/time</th> 
-                          <th>view</th>
-                           </tr>
+                          <th>Dates/Time</th>
+                          <th>View</th>
+                        </tr>
                       </thead>
                       <tbody>
                         {loading ? (
@@ -350,33 +310,33 @@ function Home() {
                         ) : (
                           blogs.map((post) => (
                             <tr key={post.id}>
-                              <td>{post.id}</td>  <td>{post.title}</td><td> {post.date} &nbsp; {post.time}</td>
+                              <td>{post.id}</td>
+                              <td>{post.title}</td>
+                              <td>{post.date} &nbsp; {post.time}</td>
                               <td>
-                                <button className='btn btn-outline-primary' onClick={() => handleView(post.id)}>view</button>
+                                <button className='btn btn-outline-primary' onClick={() => handleView(post.id)}>View</button>
                               </td>
                             </tr>
                           ))
                         )}
-
-
                       </tbody>
                     </table>
                   </div>
                 </div>
+              )}
 
-              ) : (<center></center>)}
-              {pics.length > 0 ? (
+              {pics.length > 0 && (
                 <div className="card">
                   <div className="card-body table-responsive">
-                    <h5 className="card-title">List of pictures posts</h5>
+                    <h5 className="card-title">List of picture posts</h5>
                     <table className="table datatable">
                       <thead>
                         <tr>
-                          <th><b>no</b></th>
-                          <th>pictues</th>
-                          <th data-type="date" data-format="YYYY/DD/MM">dates/time</th> 
-                           <th>view</th>
-                           </tr>
+                          <th><b>No</b></th>
+                          <th>Pictures</th>
+                          <th>Dates/Time</th>
+                          <th>View</th>
+                        </tr>
                       </thead>
                       <tbody>
                         {loading ? (
@@ -386,26 +346,20 @@ function Home() {
                             <tr key={post.id}>
                               <td>{post.id}</td>
                               <td>
-                                <img src={post.file} alt="Image" class="phone-1" data-aos="fade-right" style={{ height: '1.5cm', width: '1.5cm', borderRadius: '10%' }} />
+                                <img src={post.file} alt="Image" style={{ height: '1.5cm', width: '1.5cm', borderRadius: '10%' }} />
                               </td>
-                              <td> {post.date} &nbsp; {post.time}</td>
+                              <td>{post.date} &nbsp; {post.time}</td>
                               <td>
-                                <button className='btn btn-outline-primary' onClick={() => handleView(post.id)}>view</button>
+                                <button className='btn btn-outline-primary' onClick={() => handleView(post.id)}>View</button>
                               </td>
                             </tr>
                           ))
                         )}
-
-
                       </tbody>
                     </table>
                   </div>
                 </div>
-              ) : (<center></center>)}
-
-
-
-
+              )}
             </div>
           </div>
         </section>
