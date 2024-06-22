@@ -152,7 +152,7 @@ function Home() {
     {post.length > 0 ? (<>
       <main id="main" className="main">
         <div className="pagetitle">
-          <h1>Post Details</h1>
+          <h1>one Post Details</h1>
           <nav>
             <ol className="breadcrumb">
               <li className="breadcrumb-item"><a href="/">Home</a></li>

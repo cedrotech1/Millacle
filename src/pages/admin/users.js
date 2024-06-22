@@ -108,7 +108,7 @@ useEffect(() => {
     <>
       <main id="main" className="main">
         <div className="pagetitle">
-          <h1>Blank Page</h1>
+          <h1>Users Page</h1>
           <nav>
             <ol className="breadcrumb">
               <li className="breadcrumb-item"><a href="/">Home</a></li>
