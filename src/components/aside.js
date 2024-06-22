@@ -68,7 +68,7 @@ function Sidebar() {
             </li>
 
             <li className="nav-item">
-          <a className="nav-link collapsed" href="../settings">
+          <a className="nav-link collapsed" href="../profile">
             <i className="bi bi-gear"></i>
             <span>Settings</span>
           </a>
