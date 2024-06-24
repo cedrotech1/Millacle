@@ -111,7 +111,7 @@ function OneChair() {
       const result = await response.json();
 
       if (response.ok) {
-        toast.success('Korari updated successfully');
+        toast.success('Chorale updated successfully');
         await navigate('../chair');
         setKorari((prevKorari) => ({
           ...prevKorari,
@@ -126,8 +126,8 @@ function OneChair() {
         toast.error(result.message);
       }
     } catch (error) {
-      console.error('Error updating korari:', error);
-      toast.error('Error updating korari');
+      console.error('Error updating Chorale:', error);
+      toast.error('Error updating Chorale');
     } finally {
       setEditLoading(false);
     }
@@ -138,7 +138,7 @@ function OneChair() {
   }
 
   if (!korari) {
-    return <div>No korari details available</div>;
+    return <div>No Chorale details available</div>;
   }
 
   const { korari: korariDetails, allposts } = korari;
@@ -148,12 +148,12 @@ function OneChair() {
     <>
       <main id="main" className="main">
         <div className="pagetitle">
-          <h1>Korari Details</h1>
+          <h1>Chorale Details</h1>
           <nav>
             <ol className="breadcrumb">
               <li className="breadcrumb-item"><a href="/">Home</a></li>
               <li className="breadcrumb-item">Pages</li>
-              <li className="breadcrumb-item active">Korari Details</li>
+              <li className="breadcrumb-item active">Chorale Details</li>
             </ol>
           </nav>
         </div>
@@ -163,7 +163,7 @@ function OneChair() {
             <div className="modal-dialog">
               <div className="modal-content">
                 <div className="modal-header">
-                  <h5 className="modal-title">EDIT KORARI</h5>
+                  <h5 className="modal-title">EDIT Chorale</h5>
                   <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div className="modal-body">
@@ -241,15 +241,56 @@ function OneChair() {
                 <div className="col-lg-6">
                   <div className="card">
                     <div className="card-body">
-                      <h5 className="card-title">Korari Information</h5>
+                      <h5 className="card-title">Chorale Information</h5>
                       <p><strong>Name:</strong> {korariDetails.name}</p>
                       <p><strong>Created At:</strong> {new Date(korariDetails.createdAt).toLocaleString()}</p>
                       <br />
-                      <h5>Chair Admin</h5>
-                      <p><strong>Names:</strong> {korariDetails.KorariUser.firstname} {korariDetails.KorariUser.lastname}</p>
-                      <p><strong>Email:</strong> {korariDetails.KorariUser.email}</p>
-                      <button className="btn btn-outline-danger" onClick={() => handleDelete(korariDetails.id)}>Delete Korari</button>
-                     &nbsp; <button className="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#disablebackdrop">Edit Korari</button>
+
+                      <h5>Chorale Admin</h5>
+
+                      <div className='row' style={{  paddingTop: '-1cm' }}>
+                    <div className='col-2'>
+                      { korariDetails.KorariUser.file !== null ? (<>
+                      
+                        <img
+                          src={korariDetails.KorariUser.file}
+                          alt="Post Image"
+                          className="phone-1"
+                          style={{ width: '1.8cm', paddingTop: '0cm', borderRadius: '1%' }}
+                        />
+                        </>
+                      ) : (
+                      
+                        <img
+                          src='../assets/img/nopic.png'
+                          alt="Post Image"
+                          className="phone-1"
+                          style={{ width: '1.8cm', paddingTop: '0cm', borderRadius: '1%' }}
+                        />
+                      )
+                    } 
+                      
+
+                      </div>
+                      <div className='col-10'  style={{  paddingLeft: '0.5cm', borderRadius: '1%' }}>
+                        
+                                       
+                       <p><strong>Names:</strong> {korariDetails.KorariUser.firstname} {korariDetails.KorariUser.lastname}</p>
+                            <p><strong>Email:</strong> {korariDetails.KorariUser.email}</p>
+
+                      </div>
+
+
+                    </div>
+                           
+
+
+
+
+
+                 <br/>
+                      <button className="btn btn-outline-danger" onClick={() => handleDelete(korariDetails.id)}>Delete Chorale</button>
+                     &nbsp; <button className="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#disablebackdrop">Edit Chorale</button>
                     </div>
                   </div>
                 </div>

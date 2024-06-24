@@ -63,7 +63,7 @@ function Sidebar() {
             <li className="nav-item">
               <a className="nav-link collapsed" href="../chair">
                 <i className="bi bi-journal-text"></i>
-                <span>Manage korari</span>
+                <span>Manage Chorale</span>
               </a>
             </li>
 
@@ -102,7 +102,7 @@ function Sidebar() {
             <li className="nav-item">
               <a className="nav-link collapsed" href="../chair">
                 <i className="bi bi-journal-text"></i>
-                <span>Manage korari</span>
+                <span>Manage Chorale</span>
               </a>
             </li>
           

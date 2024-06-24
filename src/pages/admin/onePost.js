@@ -89,7 +89,7 @@ function Home() {
     }
   };
 
- 
+
   const handleChange = (e) => {
     const { name, value, files } = e.target;
     setFormData((prevData) => ({
@@ -108,8 +108,10 @@ function Home() {
       form.append('file', formData.file);
     }
 
+    console.log(formData)
     try {
       const token = localStorage.getItem('token');
+ 
       const response = await fetch(`${process.env.REACT_APP_BASE_URL}/api/v1/Posts/update/${id}`, {
         method: 'PUT',
         headers: {
@@ -121,7 +123,7 @@ function Home() {
       const result = await response.json();
 
       if (response.ok) {
-        toast.success('Korari updated successfully');
+        toast.success('post updated successfully');
         await navigate('../chair');
         setPost((prevKorari) => ({
           ...prevKorari,
@@ -130,7 +132,7 @@ function Home() {
             name: formData.name,
             file: result.data.file || prevKorari.korari.file,
           },
-          
+
         }));
       } else {
         toast.error(result.message);
@@ -149,141 +151,178 @@ function Home() {
 
   return (
     <>
-    {post.length > 0 ? (<>
-      <main id="main" className="main">
-        <div className="pagetitle">
-          <h1>one Post Details</h1>
-          <nav>
-            <ol className="breadcrumb">
-              <li className="breadcrumb-item"><a href="/">Home</a></li>
-              <li className="breadcrumb-item">Pages</li>
-              <li className="breadcrumb-item active">Post Details</li>
-            </ol>
-          </nav>
-        </div>
-
-        <section className="section">
-          <div className="row">
-            <div className="col-lg-6">
-              <div className="card">
-                <div className="card-body">
-                  {post.length > 0 && (
-                    post[0].file !== 'null' ? (
-                      <img
-                        src={post[0].file}
-                        alt="Post Image"
-                        className="phone-1"
-                        style={{ width: '100%', paddingTop: '0.5cm', borderRadius: '1%' }}
-                      />
-                    ) : (
-                      <img
-                        src='../assets/img/nopic.png'
-                        alt="Post Image"
-                        className="phone-1"
-                        style={{ width: '100%', paddingTop: '0.5cm', borderRadius: '1%' }}
-                      />
-                    )
-                  )}
-                </div>
-              </div>
-            </div>
-
-            <div className="col-lg-6">
-              <div className="card">
-                <div className="card-body">
-                  <h5 className="card-title">Post Information</h5>
-                  {post.length > 0 && (
-                    <>
-                    {
-                      post[0].type=='pic'? 
-                      <></>
-                      :<>
-                        <p><strong>Title:</strong> {post[0].title}</p>
-                        <p><strong>Description:</strong> {post[0].description}</p></>
-
-                    }
-                    
-                      <p><strong>Date:</strong> {post[0].date}, {post[0].time}</p>
-
-                      {post[0].PostsUser && (
-                        <>
-                          <h5>Posted By</h5>
-                          <p><strong>Names:</strong> {post[0].PostsUser.firstname} {post[0].PostsUser.lastname}</p>
-                          <p><strong>Email:</strong> {post[0].PostsUser.email}</p>
-                          <button className="btn btn-outline-danger m-2" onClick={() => handleDelete(post[0].id)}>Delete Post</button>
-                          <button className="btn btn-outline-primary" disabled data-bs-toggle="modal" data-bs-target="#disablebackdrop">Edit Post</button>
-                        </>
-                      )}
-                    </>
-                  )}
-                </div>
-              </div>
-            </div>
+      {post.length > 0 ? (<>
+        <main id="main" className="main">
+          <div className="pagetitle">
+            <h1>One Post Details</h1>
+            <nav>
+              <ol className="breadcrumb">
+                <li className="breadcrumb-item"><a href="/">Home</a></li>
+                <li className="breadcrumb-item">Pages</li>
+                <li className="breadcrumb-item active">Post Details</li>
+              </ol>
+            </nav>
           </div>
-        </section>
-      </main>
 
-      {/* Modal */}
-      <div className="modal fade" id="disablebackdrop" tabIndex="-1" data-bs-backdrop="false">
-            <div className="modal-dialog">
-              <div className="modal-content">
-                <div className="modal-header">
-                  <h5 className="modal-title">EDIT KORARI</h5>
-                  <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <section className="section">
+            <div className="row">
+              <div className="col-lg-6">
+                <div className="card">
+                  <div className="card-body">
+                    {post.length > 0 && (
+                      post[0].file !== 'null' ? (
+                        <img
+                          src={post[0].file}
+                          alt="Post Image"
+                          className="phone-1"
+                          style={{ width: '100%', paddingTop: '0.5cm', borderRadius: '1%' }}
+                        />
+                      ) : (
+                        <img
+                          src='../assets/img/nopic.png'
+                          alt="Post Image"
+                          className="phone-1"
+                          style={{ width: '100%', paddingTop: '0.5cm', borderRadius: '1%' }}
+                        />
+                      )
+                    )}
+                  </div>
                 </div>
-                <div className="modal-body">
-                  <div className="card">
-                    <div className="card-body">
-                      <form onSubmit={handleSubmit}>
-                        <div className="row mb-3">
-                          <div className="col-sm-12">
-                            <br />
-                            <div className="form-floating mb-3">
-                              <input
-                                type="text"
-                                name="name"
-                                className="form-control"
-                                id="floatingTitle"
-                                placeholder="name"
-                                value={formData.name}
-                                onChange={handleChange}
-                              />
-                              <label htmlFor="floatingTitle">Name</label>
-                            </div>
-                            <div className="form-floating mb-3">
-                              <input
-                                type="file"
-                                className="form-control"
-                                id="floatingFile"
-                                name="file"
-                                onChange={handleChange}
-                              />
-                              <label htmlFor="floatingFile">Upload Image</label>
-                            </div>
+              </div>
+
+              <div className="col-lg-6">
+                <div className="card">
+                  <div className="card-body">
+                    <h5 className="card-title">Post Information</h5>
+                    {post.length > 0 && (
+                      <>
+                        {
+                          post[0].type == 'pic' ?
+                            <></>
+                            : <>
+                              <p><strong>Title:</strong> {post[0].title}</p>
+                              <p><strong>Description:</strong> {post[0].description}</p>
+                              {/* image:{post[0].PostsUser.file} */}
+                              </>
+                             
+
+                        }
+
+                        <p><strong>Date:</strong> {post[0].date}, {post[0].time}</p>
+
+                        {post[0].PostsUser && (
+                          <>
+                           <br/>
+                            <h5  style={{  paddingTop: '0.5cm' }}>Posted By</h5>
+           
+                    <div className='row' style={{  paddingTop: '-1cm' }}>
+                    <div className='col-2'>
+                    {post.length > 0 && (
+                      post[0].PostsUser.file !== null ? (
+                        <img
+                          src={post[0].PostsUser.file}
+                          alt="Post Image"
+                          className="phone-1"
+                          style={{ width: '1.8cm', paddingTop: '0cm', borderRadius: '1%' }}
+                        />
+                      ) : (
+                        <img
+                          src='../assets/img/nopic.png'
+                          alt="Post Image"
+                          className="phone-1"
+                          style={{ width: '1.8cm', paddingTop: '0cm', borderRadius: '1%' }}
+                        />
+                      )
+                    )} 
+                      
+
+                      </div>
+                      <div className='col-10'  style={{  paddingLeft: '0.5cm', borderRadius: '1%' }}>
+                        
+                                       
+                       <p><strong>Names:</strong> {post[0].PostsUser.firstname} {post[0].PostsUser.lastname}</p>
+                            <p><strong>Email:</strong> {post[0].PostsUser.email}</p>
+
+                      </div>
+
+
+                    </div>
+                           
+                            <button className="btn btn-outline-danger m-2" onClick={() => handleDelete(post[0].id)}>Delete Post</button>
+                            {/* <button className="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#disablebackdrop">Edit Post</button> */}
+                          </>
+                        )}
+
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </main>
+
+        {/* Modal */}
+        <div className="modal fade" id="disablebackdrop" tabIndex="-1" data-bs-backdrop="false">
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">EDIT POST</h5>
+                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div className="modal-body">
+                <div className="card">
+                  <div className="card-body">
+                    <form onSubmit={handleSubmit}>
+                      <div className="row mb-3">
+                        <div className="col-sm-12">
+                          <br />
+                          <div className="form-floating mb-3">
+                            <input
+                              type="text"
+                              name="name"
+                              className="form-control"
+                              id="floatingTitle"
+                              placeholder="name"
+                              value={formData.name}
+                              onChange={handleChange}
+                            />
+                            <label htmlFor="floatingTitle">Name</label>
+                          </div>
+                          <div className="form-floating mb-3">
+                            <input
+                              type="file"
+                              className="form-control"
+                              id="floatingFile"
+                              name="file"
+                              onChange={handleChange}
+                            />
+                            <label htmlFor="floatingFile">Upload Image</label>
                           </div>
                         </div>
+                      </div>
 
-                        <div className="modal-footer">
-                          <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                          <button type="submit"  className={`btn btn-primary d-block ${editLoading ? 'loading' : ''}`} disabled={true}>
-                            {editLoading ? 'Loading...' : 'Save'}
-                          </button>
-                        </div>
-                      </form>
-                    </div>
+                      <div className="modal-footer">
+                        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" className={`btn btn-primary d-block ${editLoading ? 'loading' : ''}`} >
+                          {editLoading ? 'Loading...' : 'Save'}
+                        </button>
+                      </div>
+                    </form>
                   </div>
                 </div>
               </div>
             </div>
           </div>
+        </div>
       </>
-    ) : (
-                <center>
+      ) : (
+        <center>
 
-                </center>
-              )}
+        </center>
+      )}
     </>
-    );
+  );
 }
 
 export default Home;
