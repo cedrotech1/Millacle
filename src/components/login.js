@@ -115,9 +115,13 @@ function Sidebar() {
                   </div>
                 
                 </form>
+              
 
-              </div>
+              </div> 
             </div>
+            <a  href='https://miracle-center-remera.vercel.app/'>
+                                            <i class="bi bi-box-arrow-in-right"></i> Back to User pages
+                                        </a>
 
           
           </div>
